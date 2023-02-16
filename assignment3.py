@@ -23,83 +23,74 @@ def downloadData(url):
 
 
 def processData(urldata):
-    
     '''
     Process the csv data
-    
+
     :param urldata:
     :return:
-    
-    '''
-        
-    csv_data = csv.reader(io.StringIO(urldata))
-    
-    #Keep track of number of images
-    imageCounter = 0
-    
-    #Set up dictionary for counting browsers        
 
-    browserCount = {"Safari": 0, "Chrome": 0, "MSIE": 0, "Firefox": 0 }
-    
+    '''
+
+    # Set up dictionary for counting browsers
+    browserCount = {
+        "Safari": 0,
+        "Chrome": 0,
+        "MSIE": 0,
+        "Firefox": 0
+    }
+
+    # Set up dictionary for hours
+    hoursAccessed = {hour: 0 for hour in range(23)}
+
+    csv_data = csv.reader(io.StringIO(urldata))
+
+    # Keep track of number of images
+    imageCounter = 0
+
     for row in csv_data:
-        
         path_to_file = row[0]
         datetime_access_str = row[1]
         browser = row[2]
-        
-        
-        #Regular expression to look for GIF, JPG, JPEG, PNG images
-        
-        extension = path_to_file.split(".")[-1]
-        
-        #if path_to_file.upper().endswith("JPEG", "JPG", "PNG", "GIF"):
-       
-        if re.search(r"(?i)(JPG|JPEG|PNG|GIF)$", extension):
-            imageCounter = imageCounter + 1
-           
 
-        # Count browsers
-        if re.search(r"(?i)Safari", browser):
+        # Regular expression to look for images
+        if re.search(r"\.JPG|\.JPEG|\.PNG|\.GIF", path_to_file, re.IGNORECASE):
+            imageCounter = imageCounter + 1
+
+        # Count browsers by searching for the string of the browser name
+        if "Safari" in browser:
             browserCount["Safari"] += 1
 
-        if re.search(r"(?i)Chrome", browser):
+        elif "Chrome" in browser:
             browserCount["Chrome"] += 1
 
-        if re.search(r"(?i)MSIE", browser):
+        elif "MSIE" in browser:
             browserCount["MSIE"] += 1
 
-        if re.search(r"(?i)Firefox", browser):
+        elif "Firefox" in browser:
             browserCount["Firefox"] += 1
-            
-        
-    return browserCount, imageCounter
-            
-            
-    #Convert datetime_access_str to datetime
-        
+
+        # return browserCount, imageCounter
+
+        # Find most popular browser with a sorted dictionary
+        mostPopBrowser = max(browserCount, key=browserCount.get)
+
+    # Convert datetime_access_str to datetime
     access_time = datetime.datetime.strptime(datetime_access_str, "%Y %m %d %H: %M: %S")
-    
+    hoursAccessed[access_time.hour] += 1
     print(access_time.hour)
 
-    #Print image count
+
     print(f"Image count = {imageCounter}")
- 
-    #Print the browser counts and find the highest
-    print(f"Safari count = {browserCount['Safari']}")
-    print(f"Chrome count = {browserCount['Chrome']}")
-    print(f"MSIE count = {browserCount['MSIE']}")
-    print(f"Firefox count = {browserCount['Firefox']}")
-    
+    print(f"The most popular browser = {mostPopBrowser}")
+    print(hoursAccessed)
 
 
 def main(url):
     print(f"Running main with URL = {url}...")
-    
-    #data = downloadData(url)
-    
-    #processData(data)
-    
-    pass
+
+    data = downloadData(url)
+
+    processData(data)
 
 
 if __name__ == "__main__":
@@ -108,5 +99,5 @@ if __name__ == "__main__":
     parser.add_argument("--url", help="URL to the datafile", type=str, required=True)
     args = parser.parse_args()
     main(args.url)
-    
-    
+
+    # url http://s3.amazonaws.com/cuny-is211-spring2015/weblog.csv
