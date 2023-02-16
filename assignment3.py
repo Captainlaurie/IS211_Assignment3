@@ -53,6 +53,7 @@ def processData(urldata):
         browser = row[2]
 
         # Regular expression to look for images
+
         if re.search(r"\.JPG|\.JPEG|\.PNG|\.GIF", path_to_file, re.IGNORECASE):
             imageCounter = imageCounter + 1
 
@@ -71,14 +72,15 @@ def processData(urldata):
 
         # return browserCount, imageCounter
 
-        # Find most popular browser with a sorted dictionary
+        # Find most popular browser
         mostPopBrowser = max(browserCount, key=browserCount.get)
 
-    # Convert datetime_access_str to datetime
-    access_time = datetime.datetime.strptime(datetime_access_str, "%Y %m %d %H: %M: %S")
-    hoursAccessed[access_time.hour] += 1
+        # Convert datetime_access_str to datetime
+        access_time = datetime.datetime.strptime(datetime_access_str, "%Y %m %d %H: %M: %S")
+        hoursAccessed[access_time.hour] += 1
+        
+        
     print(access_time.hour)
-
 
     print(f"Image count = {imageCounter}")
     print(f"The most popular browser = {mostPopBrowser}")
