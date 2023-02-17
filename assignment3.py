@@ -70,7 +70,6 @@ def processData(urldata):
         elif "Firefox" in browser:
             browserCount["Firefox"] += 1
 
-        # return browserCount, imageCounter
 
         # Find most popular browser
         mostPopBrowser = max(browserCount, key=browserCount.get)
@@ -79,14 +78,22 @@ def processData(urldata):
         access_time = datetime.datetime.strptime(datetime_access_str, "%Y-%m-%d %H:%M:%S")
         hoursAccessed[access_time.hour] += 1
         
-        
-    print(access_time.hour)
+        # Calculate the percentage of hits that were images
+        totalHits = sum(hoursAccessed.values())
+        imagePercentage = imageCounter / totalHits * 100
 
     print(f"Image count = {imageCounter}")
+    print(f"Image requests account for {imagePercentage:.2f}% of all requests")
     print(f"The most popular browser = {mostPopBrowser}")
-    print(hoursAccessed)
-
-
+    
+    
+    # Find and print hits by hour
+    hitsByHour = [(hour, hoursAccessed[hour]) for hour in hoursAccessed]
+    hitsByHour.sort(key=lambda x: x[1], reverse=True)
+    for hour, hits in hitsByHour:
+        print(f"Hour {hour} has {hits} hits")
+    
+    
 def main(url):
     print(f"Running main with URL = {url}...")
 
@@ -102,4 +109,5 @@ if __name__ == "__main__":
     args = parser.parse_args()
     main(args.url)
 
-    # url http://s3.amazonaws.com/cuny-is211-spring2015/weblog.csv
+
+# url http://s3.amazonaws.com/cuny-is211-spring2015/weblog.csv
