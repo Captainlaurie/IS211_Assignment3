@@ -76,7 +76,7 @@ def processData(urldata):
         mostPopBrowser = max(browserCount, key=browserCount.get)
 
         # Convert datetime_access_str to datetime
-        access_time = datetime.datetime.strptime(datetime_access_str, "%Y %m %d %H: %M: %S")
+        access_time = datetime.datetime.strptime(datetime_access_str, "%Y-%m-%d %H:%M:%S")
         hoursAccessed[access_time.hour] += 1
         
         
